@@ -1,0 +1,17 @@
+raw/
+cache/
+output/
+
+LN/raw/
+LN/cache/
+LN/output/
+Skin/raw/
+Skin/cache/
+Skin/output/
+
+*.obj
+*.Robj
+*.h5ad
+*.pdf
+
+.Rhistory
