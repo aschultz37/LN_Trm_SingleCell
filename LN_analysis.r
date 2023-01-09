@@ -4,13 +4,13 @@ library(patchwork)
 
 # INITIALIZING SEURAT OBJECT
 # Set working directory
-#setwd('/gpfs/home/acs9950/singlecell/seurat_tutorial/')
+#setwd('/gpfs/home/acs9950/singlecell/2022-12-29/')
 
 # Load the dataset
-scobj.data <- Read10X(data.dir="raw/")
+scobj.data <- Read10X(data.dir="LN/filtered/")
 
 # Initialize Seurat object with the raw data
-scobj <- CreateSeuratObject(counts=scobj.data, project="seurat_tutorial", 
+scobj <- CreateSeuratObject(counts=scobj.data, project="2022-12-29_LN", 
                          min.cells=3, min.features=200)
 scobj
 
@@ -36,7 +36,7 @@ scobj <- NormalizeData(scobj, normalization.method="LogNormalize",
                        scale.factor=10000)
 
 # IDENTIFYING HIGHLY VARIABLE FEATURES
-scobj <- FindVariableFeatures(scobj, selection.method="vst", nfeatures=2000)
+scobj <- FindVariableFeatures(scobj, selection.method="vst", nfeatures=2500)
 
 # find top 10 most variable genes
 top10 <- head(VariableFeatures(scobj), 10)
@@ -71,21 +71,21 @@ JackStrawPlot(scobj, dims=1:30)
 ElbowPlot(scobj, ndims=30)
 
 # CLUSTERING CELLS
-scobj <- FindNeighbors(scobj, dims=1:23)     # choose dim based on PCA
-scobj <- FindClusters(scobj, resolution=0.5) # resolution determines # clusters
+scobj <- FindNeighbors(scobj, dims=1:10)     # choose dim based on PCA
+scobj <- FindClusters(scobj, resolution=0.2) # resolution determines # clusters
 
 # View cluster ID of cells
 head(Idents(scobj), 5)
 
 # RUN UMAP/tSNE
-scobj <- RunUMAP(scobj, dims=1:27) #choose dim based on PCA & FindNeighbors
+scobj <- RunUMAP(scobj, dims=1:15) #choose dim based on PCA & FindNeighbors
 
 # note that you can set 'label = TRUE' or use LabelClusters function to
 # label the individual clusters
 DimPlot(scobj, reduction="umap")
 
 # save the object so don't have to redo the above pre-processing steps
-saveRDS(scobj, file="output/seurat_tutorial.rds")
+saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN.rds")
 
 # FINDING DIFF. EXPRESSED FEATURES
 # FindMarkers can be used to compare clusters/groups vs. e/o or vs. all
@@ -94,12 +94,12 @@ saveRDS(scobj, file="output/seurat_tutorial.rds")
 # max.cells.per.ident downsamples each identity class (lower=faster)
 
 # find all markers of cluster 2
-cluster2.markers <- FindMarkers(scobj, ident.1=2, min.pct=0.25)
-head(cluster2.markers, n=10)
+#cluster2.markers <- FindMarkers(scobj, ident.1=2, min.pct=0.25)
+#head(cluster2.markers, n=10)
 
 # find all markers distinguishing cluster 5 from clusters 0 and 3
-cluster5.markers <- FindMarkers(scobj, ident.1=5, ident.2=c(0, 3), min.pct=0.25)
-head(cluster5.markers, n=10)
+#cluster5.markers <- FindMarkers(scobj, ident.1=5, ident.2=c(0, 3), min.pct=0.25)
+#head(cluster5.markers, n=10)
 
 # find markers for every cluster compared to all remaining cells
 # N.B. only.pos=TRUE reports only the positive markers
@@ -107,21 +107,20 @@ scobj.markers <- FindAllMarkers(scobj, only.pos=TRUE, min.pct=0.25,
                                 logfc.threshold=0.25)
 scobj.markers %>%
     group_by(cluster) %>%
-    slice_max(n=2, order_by=avg_log2FC)
+    slice_max(n=4, order_by=avg_log2FC)
 
 # multiple tests for differential expression are avail, e.g.:
-cluster0.markers <- FindMarkers(scobj, ident.1=0, logfc.threshold=0.25,
-                                test.use="roc", only.pos=TRUE)
+#cluster0.markers <- FindMarkers(scobj, ident.1=0, logfc.threshold=0.25,
+#                                test.use="roc", only.pos=TRUE)
 
 # expression probability distributions across clusters
-VlnPlot(scobj, features=c("S1pr1", "Vps37b"))
+VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6"))
 
 # plot raw counts
-VlnPlot(scobj, features=c("S1pr1", "Vps37b"), slot="counts", log=TRUE)
+VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6"), slot="counts", log=TRUE)
 
 # visualize feature expression on tSNE or PCA plot
-FeaturePlot(scobj, features=c("Cxcr6", "Cxcr4", "S1pr1", "Klf2", "Itgae", 
-                              "Cd69", "Ifng", "Tcf7"))
+FeaturePlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6"))
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 
@@ -132,10 +131,10 @@ scobj.markers %>%
 DoHeatmap(scobj, features=top10$gene) + NoLegend()
 
 # ASSIGN CELL TYPE TO CLUSTERS
-new.cluster.ids <- c("Type1", "Type2", "Type3", "Type4", "Type5", "Type6")
-names(new.cluster.ids) <- levels(scobj)
-scobj <- RenameIdents(scobj, new.cluster.ids)
-DimPlot(scobj, reduction="umap", label=TRUE, pt.size=0.5) + NoLegend()
+#new.cluster.ids <- c("Type1", "Type2", "Type3", "Type4", "Type5", "Type6")
+#names(new.cluster.ids) <- levels(scobj)
+#scobj <- RenameIdents(scobj, new.cluster.ids)
+#DimPlot(scobj, reduction="umap", label=TRUE, pt.size=0.5) + NoLegend()
 
 # save again, includes plots
-saveRDS(scobj, file="output/seurat_tutorial_figures.rds")
+saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN_figures.rds")

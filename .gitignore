@@ -1,11 +1,14 @@
 raw/
+filtered/
 cache/
 output/
 
 LN/raw/
+LN/filtered/
 LN/cache/
 LN/output/
 Skin/raw/
+Skin/filtered/
 Skin/cache/
 Skin/output/
 
@@ -13,5 +16,6 @@ Skin/output/
 *.Robj
 *.h5ad
 *.pdf
+*.png
 
 .Rhistory
