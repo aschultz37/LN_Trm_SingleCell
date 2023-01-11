@@ -28,8 +28,8 @@ plot1 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="percent.mt")
 plot2 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="nFeature_RNA")
 plot1 + plot2
 
-scobj <- subset(scobj, subset=(nFeature_RNA > 200 & nFeature_RNA < 2500 
-                & percent.mt < 5))
+scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 5000 
+                & percent.mt < 3))
 
 # NORMALIZING DATA
 scobj <- NormalizeData(scobj, normalization.method="LogNormalize",
@@ -71,8 +71,8 @@ JackStrawPlot(scobj, dims=1:30)
 ElbowPlot(scobj, ndims=30)
 
 # CLUSTERING CELLS
-scobj <- FindNeighbors(scobj, dims=1:10)     # choose dim based on PCA
-scobj <- FindClusters(scobj, resolution=0.2) # resolution determines # clusters
+scobj <- FindNeighbors(scobj, dims=1:15)     # choose dim based on PCA
+scobj <- FindClusters(scobj, resolution=0.3) # resolution determines # clusters
 
 # View cluster ID of cells
 head(Idents(scobj), 5)
@@ -98,8 +98,8 @@ saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN.rds")
 #head(cluster2.markers, n=10)
 
 # find all markers distinguishing cluster 5 from clusters 0 and 3
-#cluster5.markers <- FindMarkers(scobj, ident.1=5, ident.2=c(0, 3), min.pct=0.25)
-#head(cluster5.markers, n=10)
+#cluster5.markers <- FindMarkers(scobj, ident.1=5, ident.2=c(4), min.pct=0.25)
+#head(cluster5.markers, n=50)
 
 # find markers for every cluster compared to all remaining cells
 # N.B. only.pos=TRUE reports only the positive markers
@@ -114,13 +114,14 @@ scobj.markers %>%
 #                                test.use="roc", only.pos=TRUE)
 
 # expression probability distributions across clusters
-VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6"))
+VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1"))
 
 # plot raw counts
-VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6"), slot="counts", log=TRUE)
+VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1"), 
+                          slot="counts", log=TRUE)
 
 # visualize feature expression on tSNE or PCA plot
-FeaturePlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6"))
+FeaturePlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1"))
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 

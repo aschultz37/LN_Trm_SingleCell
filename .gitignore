@@ -17,5 +17,6 @@ Skin/output/
 *.h5ad
 *.pdf
 *.png
+*.html
 
 .Rhistory
