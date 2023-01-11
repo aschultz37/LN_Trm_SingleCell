@@ -28,8 +28,8 @@ plot1 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="percent.mt")
 plot2 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="nFeature_RNA")
 plot1 + plot2
 
-scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 5000 
-                & percent.mt < 3))
+scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 5500 
+                & percent.mt < 4))
 
 # NORMALIZING DATA
 scobj <- NormalizeData(scobj, normalization.method="LogNormalize",
@@ -83,6 +83,8 @@ scobj <- RunUMAP(scobj, dims=1:15) #choose dim based on PCA & FindNeighbors
 # note that you can set 'label = TRUE' or use LabelClusters function to
 # label the individual clusters
 DimPlot(scobj, reduction="umap")
+# print number of cells per cluster
+table(Idents(scobj))
 
 # save the object so don't have to redo the above pre-processing steps
 saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN.rds")
