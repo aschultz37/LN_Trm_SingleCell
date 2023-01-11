@@ -155,7 +155,8 @@ write.csv(cluster7.markers.sig, "LN/output/cluster7.csv", row.names=TRUE)
 #                                test.use="roc", only.pos=TRUE)
 
 # expression probability distributions across clusters
-genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1")
+genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1", 
+             "Cd8a", "Thy1", "Ptprc", "Cd3e")
 VlnPlot(scobj, features=genelist)
 
 # plot raw counts
