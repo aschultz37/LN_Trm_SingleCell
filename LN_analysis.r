@@ -99,9 +99,17 @@ saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN.rds")
 #cluster2.markers <- FindMarkers(scobj, ident.1=2, min.pct=0.25)
 #head(cluster2.markers, n=10)
 
-# find all markers distinguishing cluster 5 from clusters 0 and 3
-#cluster5.markers <- FindMarkers(scobj, ident.1=5, ident.2=c(4), min.pct=0.25)
-#head(cluster5.markers, n=50)
+# find all markers distinguishing cluster 0 and 1
+cluster0.markers <- FindMarkers(scobj, ident.1=0, ident.2=c(1), min.pct=0.25)
+head(cluster0.markers, n=50)
+
+# find all markers distinguishing cluster 1 and 2
+cluster1.markers <- FindMarkers(scobj, ident.1=1, ident.2=c(2), min.pct=0.25)
+head(cluster1.markers, n=50)
+
+# find all markers distinguishing cluster 2 and 0
+cluster2.markers <- FindMarkers(scobj, ident.1=2, ident.2=c(0), min.pct=0.25)
+head(cluster2.markers, n=50)
 
 # find markers for every cluster compared to all remaining cells
 # N.B. only.pos=TRUE reports only the positive markers
