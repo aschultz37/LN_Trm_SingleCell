@@ -116,14 +116,14 @@ scobj.markers %>%
 #                                test.use="roc", only.pos=TRUE)
 
 # expression probability distributions across clusters
-VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1"))
+genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1")
+VlnPlot(scobj, features=genelist)
 
 # plot raw counts
-VlnPlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1"), 
-                          slot="counts", log=TRUE)
+VlnPlot(scobj, features=genelist, slot="counts", log=TRUE)
 
 # visualize feature expression on tSNE or PCA plot
-FeaturePlot(scobj, features=c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1"))
+FeaturePlot(scobj, features=genelist)
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 
