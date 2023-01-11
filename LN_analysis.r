@@ -87,7 +87,7 @@ DimPlot(scobj, reduction="umap")
 table(Idents(scobj))
 
 # save the object so don't have to redo the above pre-processing steps
-saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN.rds")
+saveRDS(scobj, file="LN/output/2022-12-29_LN.rds")
 
 # FINDING DIFF. EXPRESSED FEATURES
 # FindMarkers can be used to compare clusters/groups vs. e/o or vs. all
@@ -100,16 +100,29 @@ saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN.rds")
 #head(cluster2.markers, n=10)
 
 # find all markers distinguishing cluster 0 and 1
-cluster0.markers <- FindMarkers(scobj, ident.1=0, ident.2=c(1), min.pct=0.25)
-head(cluster0.markers, n=50)
+cluster0v1.markers <- FindMarkers(scobj, ident.1=0, ident.2=c(1), min.pct=0.25)
+cluster0v1.markers.sig <- subset(cluster0v1.markers, p_val_adj<=0.05)
+head(cluster0v1.markers.sig, n=50)
+write.csv(cluster0v1.markers.sig, "LN/output/cluster0v1.csv", row.names=TRUE)
 
 # find all markers distinguishing cluster 1 and 2
-cluster1.markers <- FindMarkers(scobj, ident.1=1, ident.2=c(2), min.pct=0.25)
-head(cluster1.markers, n=50)
+cluster1v2.markers <- FindMarkers(scobj, ident.1=1, ident.2=c(2), min.pct=0.25)
+cluster1v2.markers.sig <- subset(cluster1v2.markers, p_val_adj<=0.05)
+head(cluster1v2.markers.sig, n=50)
+write.csv(cluster1v2.markers.sig, "LN/output/cluster1v2.csv", row.names=TRUE)
 
 # find all markers distinguishing cluster 2 and 0
-cluster2.markers <- FindMarkers(scobj, ident.1=2, ident.2=c(0), min.pct=0.25)
-head(cluster2.markers, n=50)
+cluster2v0.markers <- FindMarkers(scobj, ident.1=2, ident.2=c(0), min.pct=0.25)
+cluster2v0.markers.sig <- subset(cluster2v0.markers, p_val_adj<=0.05)
+head(cluster2v0.markers.sig, n=50)
+write.csv(cluster2v0.markers.sig, "LN/output/cluster2v0.csv", row.names=TRUE)
+
+# find all markers distinguishing cluster 2 from 0 and 1
+cluster2v01.markers <- FindMarkers(scobj, ident.1=2, ident.2=c(0, 1), 
+                                  min.pct=0.25)
+cluster2v01.markers.sig <- subset(cluster2v01.markers, p_val_adj<=0.05)
+head(cluster2v01.markers.sig, n=50)
+write.csv(cluster2v01.markers.sig, "LN/output/cluster2v01.csv", row.names=TRUE)
 
 # find markers for every cluster compared to all remaining cells
 # N.B. only.pos=TRUE reports only the positive markers
@@ -118,6 +131,24 @@ scobj.markers <- FindAllMarkers(scobj, only.pos=TRUE, min.pct=0.25,
 scobj.markers %>%
     group_by(cluster) %>%
     slice_max(n=4, order_by=avg_log2FC)
+
+cluster0.markers.sig = subset(subset(scobj.markers, cluster=0), p_val_adj<=0.05)
+cluster1.markers.sig = subset(subset(scobj.markers, cluster=1), p_val_adj<=0.05)
+cluster2.markers.sig = subset(subset(scobj.markers, cluster=2), p_val_adj<=0.05)
+cluster3.markers.sig = subset(subset(scobj.markers, cluster=3), p_val_adj<=0.05)
+cluster4.markers.sig = subset(subset(scobj.markers, cluster=4), p_val_adj<=0.05)
+cluster5.markers.sig = subset(subset(scobj.markers, cluster=5), p_val_adj<=0.05)
+cluster6.markers.sig = subset(subset(scobj.markers, cluster=6), p_val_adj<=0.05)
+cluster7.markers.sig = subset(subset(scobj.markers, cluster=7), p_val_adj<=0.05)
+
+write.csv(cluster0.markers.sig, "LN/output/cluster0.csv", row.names=TRUE)
+write.csv(cluster1.markers.sig, "LN/output/cluster1.csv", row.names=TRUE)
+write.csv(cluster2.markers.sig, "LN/output/cluster2.csv", row.names=TRUE)
+write.csv(cluster3.markers.sig, "LN/output/cluster3.csv", row.names=TRUE)
+write.csv(cluster4.markers.sig, "LN/output/cluster4.csv", row.names=TRUE)
+write.csv(cluster5.markers.sig, "LN/output/cluster5.csv", row.names=TRUE)
+write.csv(cluster6.markers.sig, "LN/output/cluster6.csv", row.names=TRUE)
+write.csv(cluster7.markers.sig, "LN/output/cluster7.csv", row.names=TRUE)
 
 # multiple tests for differential expression are avail, e.g.:
 #cluster0.markers <- FindMarkers(scobj, ident.1=0, logfc.threshold=0.25,
@@ -134,6 +165,8 @@ VlnPlot(scobj, features=genelist, slot="counts", log=TRUE)
 FeaturePlot(scobj, features=genelist)
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
+# ridge plot
+RidgePlot(scobj, features=genelist, ncol=2)
 
 # generate expression heatmap for top 10 markers for each cluster
 scobj.markers %>%
@@ -148,4 +181,4 @@ DoHeatmap(scobj, features=top10$gene) + NoLegend()
 #DimPlot(scobj, reduction="umap", label=TRUE, pt.size=0.5) + NoLegend()
 
 # save again, includes plots
-saveRDS(scobj, file="LN/output/filtered/2022-12-29_LN_figures.rds")
+saveRDS(scobj, file="LN/output/2022-12-29_LN_figures.rds")
