@@ -18,6 +18,7 @@ Skin/output/
 *.pdf
 *.png
 *.html
+*.csv
 
 .RData
 .Rhistory
