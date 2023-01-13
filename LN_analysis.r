@@ -6,6 +6,9 @@ library(patchwork)
 # Set working directory
 #setwd('/gpfs/home/acs9950/singlecell/2022-12-29/')
 
+# LOADING THE SEURAT OBJECT
+#scobj <- readRDS("LN/output/2022-12-29_LN_figures.rds")
+
 # Load the dataset
 scobj.data <- Read10X(data.dir="LN/filtered/")
 
@@ -17,9 +20,13 @@ scobj
 # QC & FILTERING CELLS
 # [[ operator adds column to object metadata (good place to store QC info)
 scobj[["percent.mt"]] <- PercentageFeatureSet(scobj, pattern="^mt-")
+# do the same for ribosomal proteins (Rps, Rpl)
+scobj[["percent.rps"]] <- PercentageFeatureSet(scobj, pattern="Rps")
+scobj[["percent.rpl"]] <- PercentageFeatureSet(scobj, pattern="Rpl")
 
 # Visualize QC metrics as violin plot
-VlnPlot(scobj, features=c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol=3)
+VlnPlot(scobj, features=c("nFeature_RNA", "nCount_RNA"), ncol=2)
+VlnPlot(scobj, features=c("percent.mt", "percent.rps", "percent.rpl"), ncol=3)
 
 # FeatureScatter used to visualize feature-feature relationships
 # Can also be used for anything calculated by the object (col in metadata, 
@@ -28,8 +35,8 @@ plot1 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="percent.mt")
 plot2 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="nFeature_RNA")
 plot1 + plot2
 
-scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 5500 
-                & percent.mt < 4))
+scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 6000 
+                & percent.mt < 5))
 
 # NORMALIZING DATA
 scobj <- NormalizeData(scobj, normalization.method="LogNormalize",
@@ -174,6 +181,9 @@ scobj.markers %>%
     group_by(cluster) %>%
     top_n(n=10, wt=avg_log2FC) -> top10
 DoHeatmap(scobj, features=top10$gene) + NoLegend()
+
+# generate a heatmap based on cluster2v01
+#choose markers based on avg_log2FC -- clean up Gm and Rp genes first
 
 # ASSIGN CELL TYPE TO CLUSTERS
 #new.cluster.ids <- c("Type1", "Type2", "Type3", "Type4", "Type5", "Type6")
