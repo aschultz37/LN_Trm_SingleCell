@@ -36,7 +36,7 @@ plot2 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="nFeature_RNA")
 plot1 + plot2
 
 scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 6000 
-                & percent.mt < 5))
+                & percent.mt < 5 & percent.rps < 23 & percent.rpl < 23))
 
 # NORMALIZING DATA
 scobj <- NormalizeData(scobj, normalization.method="LogNormalize",
