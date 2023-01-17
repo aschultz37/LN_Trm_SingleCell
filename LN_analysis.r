@@ -248,9 +248,6 @@ sub1_genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1",
              "Cd8a", "Thy1", "Ptprc", "Cd3e")
 VlnPlot(sub1_scobj, features=sub1_genelist)
 
-# plot log transformed counts
-VlnPlot(sub1_scobj, features=sub1_genelist, slot="counts", log=TRUE)
-
 # visualize feature expression on tSNE or PCA plot
 FeaturePlot(sub1_scobj, features=sub1_genelist)
 # to detect naive T cells
@@ -266,4 +263,11 @@ sub1_scobj.markers %>%
   top_n(n=10, wt=avg_log2FC) -> sub1_top10
 DoHeatmap(sub1_scobj, features=sub1_top10$gene) + NoLegend()
 
-saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_clust_rm.rds")
+# find all markers distinguishing cluster 2 from 0 and 1
+cluster2v01.markers <- FindMarkers(scobj, ident.1=2, ident.2=c(0, 1), 
+                                   min.pct=0.25)
+cluster2v01.markers.sig <- subset(cluster2v01.markers, p_val_adj<=0.05)
+#head(cluster2v01.markers.sig, n=50)
+write.csv(cluster2v01.markers.sig, "LN/output/cluster2v01_sub1.csv", row.names=TRUE)
+
+saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
