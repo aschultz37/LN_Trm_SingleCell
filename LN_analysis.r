@@ -200,6 +200,7 @@ DoHeatmap(scobj, features=top10$gene) + NoLegend()
 saveRDS(scobj, file="LN/output/2022-12-29_LN_figures_rp.rds")
 
 # REMOVE CLUSTERS AND RE-ANALYZE
+#sub1_scobj = readRDS("LN/output/2022-12-29_LN_sub1.rds")
 # Remove clusters 4, 7, 8 and keep the remaining for new analysis
 sub1_scobj = subset(x=scobj, idents=c(4, 7, 8), invert=TRUE)
 
@@ -263,11 +264,18 @@ sub1_scobj.markers %>%
   top_n(n=10, wt=avg_log2FC) -> sub1_top10
 DoHeatmap(sub1_scobj, features=sub1_top10$gene) + NoLegend()
 
+# find all markers distinguishing cluster 0 and 1
+cluster0v1_sub1.markers <- FindMarkers(sub1_scobj, ident.1=0, ident.2=c(1), 
+                                       min.pct=0.25)
+cluster0v1_sub1.markers.sig <- subset(cluster0v1_sub1.markers, p_val_adj<=0.05)
+write.csv(cluster0v1_sub1.markers.sig, "LN/output/cluster0v1_sub1.csv", 
+          row.names=TRUE)
+
 # find all markers distinguishing cluster 2 from 0 and 1
-cluster2v01.markers <- FindMarkers(scobj, ident.1=2, ident.2=c(0, 1), 
+cluster2v01_sub1.markers <- FindMarkers(sub1_scobj, ident.1=2, ident.2=c(0, 1), 
                                    min.pct=0.25)
-cluster2v01.markers.sig <- subset(cluster2v01.markers, p_val_adj<=0.05)
-#head(cluster2v01.markers.sig, n=50)
-write.csv(cluster2v01.markers.sig, "LN/output/cluster2v01_sub1.csv", row.names=TRUE)
+cluster2v01_sub1.markers.sig <- subset(cluster2v01_sub1.markers, p_val_adj<=0.05)
+write.csv(cluster2v01_sub1.markers.sig, "LN/output/cluster2v01_sub1.csv", 
+          row.names=TRUE)
 
 saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
