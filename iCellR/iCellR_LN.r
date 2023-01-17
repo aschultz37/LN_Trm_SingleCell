@@ -45,10 +45,11 @@ LN.obj <- gene.stats(LN.obj, which.data="main.data")
 head(LN.obj@gene.data[order(LN.obj@gene.data$numberOfCells, decreasing=T),])
 
 # Gene Model for Clustering
-#make model
+#see model
 make.gene.model(LN.obj, my.out.put="plot",
                 dispersion.limit=1.5, 
-                base.mean.rank=500, 
+                base.mean.rank=500,
+                gene.num.max=5500,
                 no.mito.model=T, 
                 mark.mito=T, 
                 interactive=F,
@@ -56,7 +57,8 @@ make.gene.model(LN.obj, my.out.put="plot",
 #write the model data into object
 LN.obj <- make.gene.model(LN.obj, my.out.put="data",
                           dispersion.limit=1.5, 
-                          base.mean.rank=500, 
+                          base.mean.rank=500,
+                          gene.num.max=5500,
                           no.mito.model=T, 
                           mark.mito=T, 
                           interactive=F,
@@ -65,8 +67,9 @@ head(LN.obj@gene.model)
 
 # Principal Component Analysis (PCA)
 # Note: skip this step if doing batch correction (use iba function)
+# using list of all genes instead of LN.obj@gene.model
 LN.obj <- run.pca(LN.obj, method="gene.model", 
-                  gene.list=LN.obj@gene.model, data.type="main")
+                  gene.list=LN.obj@gene.data$genes, data.type="main")
 opt.pcs.plot(LN.obj)
 
 # Clustering & Dimensionality Reduction (UMAP)
