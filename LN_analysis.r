@@ -236,7 +236,7 @@ sub1_scobj <- FindClusters(sub1_scobj, resolution=0.3) # resolution determines #
 sub1_scobj <- RunUMAP(sub1_scobj, dims=1:25) #choose dim based on PCA/Neighbors
 # note that you can set 'label = TRUE' or use LabelClusters function to
 # label the individual clusters
-DimPlot(sub1_scobj, reduction="umap")
+DimPlot(sub1_scobj, reduction="umap", pt.size=3, cols="Dark2")
 # print number of cells per cluster
 table(Idents(sub1_scobj))
 
