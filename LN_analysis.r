@@ -276,6 +276,20 @@ VlnPlot(sub1_scobj, features=traffic_gene_list, cols=custom_color_palette,
 
 # visualize feature expression on tSNE or PCA plot
 FeaturePlot(sub1_scobj, features=sub1_genelist)
+
+# visualize LN_Trm genes in feature plots
+# FeaturePlot for list of genes of arbitrary length (groups of 12)
+final_index <- 0
+for(i in 1:length(LN_Trm_genes)){
+  if((i %% 12) == 0){
+    print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i]))
+    final_index <- i
+  }
+}
+FeaturePlot(sub1_scobj, 
+            features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)])
+
+
 # to detect naive T cells
 FeaturePlot(sub1_scobj, features="Cd44")
 
