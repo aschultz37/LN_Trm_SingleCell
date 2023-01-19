@@ -236,7 +236,9 @@ sub1_scobj <- FindClusters(sub1_scobj, resolution=0.3) # resolution determines #
 sub1_scobj <- RunUMAP(sub1_scobj, dims=1:25) #choose dim based on PCA/Neighbors
 # note that you can set 'label = TRUE' or use LabelClusters function to
 # label the individual clusters
-DimPlot(sub1_scobj, reduction="umap", pt.size=3, cols="Dark2")
+custom_color_palette = c("#1B9E77", "#D95F02", "#7570B3", "#CB008A", "#66A61E", 
+                         "#E6AB02", "#A6761D", "#666666")
+DimPlot(sub1_scobj, reduction="umap", pt.size=2.5, cols=custom_color_palette)
 # print number of cells per cluster
 table(Idents(sub1_scobj))
 
@@ -247,7 +249,30 @@ sub1_scobj.markers <- FindAllMarkers(sub1_scobj, only.pos=TRUE, min.pct=0.25,
 # expression probability distributions across clusters
 sub1_genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1", 
              "Cd8a", "Thy1", "Ptprc", "Cd3e")
-VlnPlot(sub1_scobj, features=sub1_genelist)
+LN_Trm_genes <- c("Acap1", "Actn2", "Amica1", "Arhgef1", "Atxn7l3b", "Aw112010", 
+                  "B4galnt1", "Bcl11b", "Cbx3", "Ccnd2", "Ccr10", "Cd27", "Cd7", 
+                  "Cd74", "Chd3", "Cirbp", "Clec2d", "Crot", "Csf1", "Cxcr3", 
+                  "Cxcr6", "Eif5", "Evl", "Fam189b", "Fubp1", "Fyb", "Gramd1a", 
+                  "Sema4a","Gstp1", "Shisa5", "H2-T23", "Sipa1", "Hmgn1", 
+                  "Slfn2", "Hmha1", "Sp100", "Hsp90b1", "Spcs2", "Id2", "Srrm2", 
+                  "Ifitm10", "Stap1", "Ikzf3", "Tbc1d10c", "Il16", "Tesc", 
+                  "Il18r1", "Tnfaip8", "Il7r", "Tnrc6a", "Irf2bpl", "Tsc22d4", 
+                  "Itgae", "Uba52", "Itgal", "Ucp2", "Itm2c", "Wbp1", "Lfng", 
+                  "Xist", "Lpar6", "Ypel3", "Lrrc58", "Zbtb7a", "Ltb", "Znrf1", 
+                  "Ly6a", "Ly6e", "Ly6g5b", "Malat1", "Mbnl1", "Mrpl52", "Mxd4", 
+                  "Mycbp2", "N4bp2l2", "N4bp2l2", "Ndufa3", "Ndufa5", "Nktr", 
+                  "Nudcd3", "Ogt", "Pdcd4", "Pdia3", "Pdia6", "Ptpn7", "Ptprc", 
+                  "Rapgef6", "Rbpj", "Rgs10", "Rpl15", "Rpl35", "Rpl38", 
+                  "Rps28", "Rps29", "Sash3")
+cytotoxic_gene_list = c("Prf1", "Gzmb", "Gzmk", "Ccl4", "Ccl5", "Csf1")
+traffic_gene_list = c("S1pr1", "Ccr7", "Cxcr4", "Cxcr3", "Cxcr6")
+clusters_of_interest = c("0", "1", "2", "3")
+VlnPlot(sub1_scobj, features=sub1_genelist, cols=custom_color_palette,
+        idents=NULL)
+VlnPlot(sub1_scobj, features=cytotoxic_gene_list, cols=custom_color_palette,
+        idents=clusters_of_interest)
+VlnPlot(sub1_scobj, features=traffic_gene_list, cols=custom_color_palette,
+        idents=clusters_of_interest)
 
 # visualize feature expression on tSNE or PCA plot
 FeaturePlot(sub1_scobj, features=sub1_genelist)
