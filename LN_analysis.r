@@ -266,7 +266,7 @@ LN_Trm_genes <- c("Acap1", "Actn2", "Arhgef1", "Atxn7l3b",
                   "Rapgef6", "Rbpj", "Rgs10", "Rpl15", "Rpl35", "Rpl38",
                   "Rps28", "Rps29", "Sash3")
 cytotoxic_gene_list = c("Prf1", "Gzmb", "Gzmk", "Ccl4", "Ccl5", "Csf1")
-traffic_gene_list = c("S1pr1", "Ccr7", "Cxcr4", "Cxcr3", "Cxcr6")
+traffic_gene_list = c("S1pr1", "Sell", "Ccr7", "Cxcr4", "Cxcr3", "Cxcr6")
 clusters_of_interest = c("0", "1", "2", "3")
 VlnPlot(sub1_scobj, features=sub1_genelist, cols=custom_color_palette,
         idents=NULL)
