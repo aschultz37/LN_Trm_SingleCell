@@ -276,27 +276,29 @@ VlnPlot(sub1_scobj, features=traffic_gene_list, cols=custom_color_palette,
         idents=clusters_of_interest)
 
 # visualize feature expression on tSNE or PCA plot
-FeaturePlot(sub1_scobj, features=sub1_genelist)
+FeaturePlot(sub1_scobj, features=sub1_genelist, cols=brewer.pal(n=11, name="RdBu"))
 
 # visualize LN_Trm genes in feature plots
 # FeaturePlot for list of genes of arbitrary length (groups of 12)
 final_index <- 0
 for(i in 1:length(LN_Trm_genes)){
   if((i %% 12) == 0){
-    print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i]))
+    print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i], c
+                      ols=brewer.pal(n=11, name="RdBu")))
     final_index <- i
   }
 }
 FeaturePlot(sub1_scobj, 
-            features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)])
+            features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)], 
+            cols=brewer.pal(n=11, name="RdBu"))
 
 
 # to detect naive T cells
-FeaturePlot(sub1_scobj, features="Cd44")
+FeaturePlot(sub1_scobj, pt.size=2.5, features="Cd44", cols=brewer.pal(n=11, name="RdBu"))
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 # ridge plot
-RidgePlot(sub1_scobj, features=sub1_genelist, ncol=3)
+RidgePlot(sub1_scobj, features=sub1_genelist, cols=custom_color_palette, ncol=3)
 
 # generate expression heatmap for top 10 markers for each cluster
 sub1_scobj.markers %>%
@@ -321,6 +323,6 @@ write.csv(cluster2v01_sub1.markers.sig, "LN/output/cluster2v01_sub1.csv",
 # calculate module score for feature expression
 sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(LN_Trm_genes),
                              ctrl=100, name="LN_Trm")
-FeaturePlot(sub1_scobj, features="LN_Trm1",pt.size=2.5, cols=brewer.pal(n=11, name="RdBu"))
+FeaturePlot(sub1_scobj, features="LN_Trm1", pt.size=2.5, cols=brewer.pal(n=11, name="RdBu"))
 
 saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
