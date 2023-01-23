@@ -201,7 +201,7 @@ DoHeatmap(scobj, features=top10$gene) + NoLegend()
 saveRDS(scobj, file="LN/output/2022-12-29_LN_figures_rp.rds")
 
 # REMOVE CLUSTERS AND RE-ANALYZE
-#sub1_scobj = readRDS("LN/output/2022-12-29_LN_sub1.rds")
+sub1_scobj = readRDS("LN/output/2022-12-29_LN_sub1.rds")
 # Remove clusters 4, 7, 8 and keep the remaining for new analysis
 sub1_scobj = subset(x=scobj, idents=c(4, 7, 8), invert=TRUE)
 
@@ -275,26 +275,26 @@ VlnPlot(sub1_scobj, features=cytotoxic_gene_list, cols=custom_color_palette,
 VlnPlot(sub1_scobj, features=traffic_gene_list, cols=custom_color_palette,
         idents=clusters_of_interest)
 
+FeaturePlot(sub1_scobj, features=cytotoxic_gene_list)
+
 # visualize feature expression on tSNE or PCA plot
-FeaturePlot(sub1_scobj, features=sub1_genelist, cols=brewer.pal(n=11, name="RdBu"))
+FeaturePlot(sub1_scobj, features=sub1_genelist)
 
 # visualize LN_Trm genes in feature plots
 # FeaturePlot for list of genes of arbitrary length (groups of 12)
 final_index <- 0
 for(i in 1:length(LN_Trm_genes)){
   if((i %% 12) == 0){
-    print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i], c
-                      ols=brewer.pal(n=11, name="RdBu")))
+    print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i]))
     final_index <- i
   }
 }
 FeaturePlot(sub1_scobj, 
-            features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)], 
-            cols=brewer.pal(n=11, name="RdBu"))
+            features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)])
 
 
 # to detect naive T cells
-FeaturePlot(sub1_scobj, pt.size=2.5, features="Cd44", cols=brewer.pal(n=11, name="RdBu"))
+FeaturePlot(sub1_scobj, pt.size=2.5, features="Cd44")
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 # ridge plot
@@ -304,7 +304,7 @@ RidgePlot(sub1_scobj, features=sub1_genelist, cols=custom_color_palette, ncol=3)
 sub1_scobj.markers %>%
   group_by(cluster) %>%
   top_n(n=10, wt=avg_log2FC) -> sub1_top10
-DoHeatmap(sub1_scobj, features=sub1_top10$gene) + NoLegend()
+DoHeatmap(sub1_scobj, features=sub1_top10$gene, cols=custom_color_palette) + NoLegend()
 
 # find all markers distinguishing cluster 0 and 1
 cluster0v1_sub1.markers <- FindMarkers(sub1_scobj, ident.1=0, ident.2=c(1), 
@@ -326,3 +326,4 @@ sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(LN_Trm_genes),
 FeaturePlot(sub1_scobj, features="LN_Trm1", pt.size=2.5, cols=brewer.pal(n=11, name="RdBu"))
 
 saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
+
