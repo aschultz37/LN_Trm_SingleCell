@@ -28,4 +28,4 @@ RidgePlot(scobj_cc, features=c("Pcna", "Top2a", "Mcm6", "Mki67"),
 scobj_cc <- ScaleData(scobj_cc, vars.to.regress=c("S.Score", "G2M.Score"), 
                       features=rownames(scobj_cc))
 
-saveRDS(scobj_cc, "LN/output/2022-12-29_LN_cc.rds")
+saveRDS(scobj_cc, "LN/output/2022-12-29_LN_sub1_cc.rds")

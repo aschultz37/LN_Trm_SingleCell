@@ -25,4 +25,5 @@ EnhancedVolcano(cluster2v01_vp.markers,
                 pCutoff=0.01,
                 FCcutoff=0.5,
                 pointSize=3.0,
-                labSize=5.0)
+                labSize=5.0,
+                selectLab=NULL)
