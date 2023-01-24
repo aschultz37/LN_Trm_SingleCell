@@ -1,3 +1,5 @@
+# This file is the initial QC and analysis of the object.
+
 # library(dplyr)
 # library(Seurat)
 # library(patchwork)

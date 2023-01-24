@@ -1,3 +1,6 @@
+# This file removes clusters from initial analysis that are not real/artifacts.
+# 4, 7, and 8 are removed.
+
 # library(dplyr)
 # library(Seurat)
 # library(patchwork)

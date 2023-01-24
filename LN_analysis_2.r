@@ -1,3 +1,6 @@
+# This file combines non-Trm clusters into one cluster and analyzes the new
+# cluster against the Trm cluster.
+
 # library(dplyr)
 # library(Seurat)
 # library(patchwork)
