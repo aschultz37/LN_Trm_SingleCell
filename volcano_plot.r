@@ -1,7 +1,7 @@
-library(dplyr)
-library(Seurat)
-library(patchwork)
-library(RColorBrewer)
+# library(dplyr)
+# library(Seurat)
+# library(patchwork)
+# library(RColorBrewer)
 library(EnhancedVolcano)
 
 # load copy of desired object
