@@ -29,3 +29,18 @@ EnhancedVolcano(cluster2vT_vp.markers,
                 pointSize=3.0,
                 labSize=5.0,
                 selectLab=NULL)
+
+# cxcr6_deg <- read.csv("~/Downloads/Cluster2_vs_Cluster3.csv")
+# p1 <- EnhancedVolcano(cxcr6_deg,
+#                 lab=cxcr6_deg$X,
+#                 x='log2FoldChange',
+#                 y='padj',
+#                 title="Trm vs Other T CXCR6",
+#                 pCutoff=0.01,
+#                 FCcutoff=0.5,
+#                 pointSize=3.0,
+#                 labSize=5.0,
+#                 selectLab=NULL)
+# p1 +
+#   ggplot2::coord_cartesian(xlim=c(-8, 8)) +
+#   ggplot2::scale_x_continuous(breaks=seq(-8, 8, 2))
