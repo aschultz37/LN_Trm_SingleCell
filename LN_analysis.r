@@ -1,7 +1,7 @@
-library(dplyr)
-library(Seurat)
-library(patchwork)
-library(RColorBrewer)
+# library(dplyr)
+# library(Seurat)
+# library(patchwork)
+# library(RColorBrewer)
 
 # INITIALIZING SEURAT OBJECT
 # Set working directory
