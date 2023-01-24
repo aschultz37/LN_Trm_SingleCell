@@ -6,6 +6,7 @@
 # Object should already have normalized and scaled data, PCA, etc.
 scobj_cc <- readRDS("LN/output/2022-12-29_LN_sub1.rds")
 
+# REGRESSION
 # A list of cell cycle markers, from Tirosh et al, 2015, is loaded with Seurat.  
 # We can segregate this list into markers of G2/M phase and markers of S phase
 s.genes <- tolower(cc.genes$s.genes)
@@ -30,6 +31,7 @@ scobj_cc <- ScaleData(scobj_cc, vars.to.regress=c("S.Score", "G2M.Score"),
 
 saveRDS(scobj_cc, "LN/output/2022-12-29_LN_sub1_cc.rds")
 
+# DOWNSTREAM ANALYSIS
 # rerun PCA
 scobj_cc <- RunPCA(scobj_cc, features=VariableFeatures(object=scobj_cc))
 
