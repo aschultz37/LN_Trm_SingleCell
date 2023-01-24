@@ -24,3 +24,5 @@ LN_Trm_genes <- c("Acap1", "Actn2", "Arhgef1", "Atxn7l3b",
                   "Rps28", "Rps29", "Sash3")
 cytotoxic_gene_list = c("Prf1", "Gzmb", "Gzmk", "Ccl4", "Ccl5", "Csf1")
 traffic_gene_list = c("S1pr1", "Sell", "Ccr7", "Cxcr4", "Cxcr3", "Cxcr6")
+gen_gene_list = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1", 
+                  "Cd8a", "Thy1", "Ptprc", "Cd3e")

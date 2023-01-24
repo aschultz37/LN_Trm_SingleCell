@@ -8,8 +8,6 @@
 
 sub2_custom_color_palette = c("#1B9E77", "#7570B3", "#66A61E", 
                          "#E6AB02", "#A6761D", "#666666")
-sub2_genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1", 
-                  "Cd8a", "Thy1", "Ptprc", "Cd3e")
 sub2_clusters_of_interest = c("0", "2")
 
 # in a new object that is a copy of sub1_scobj, combine clusters 0,1,3
@@ -31,7 +29,7 @@ sub2_scobj.markers <- FindAllMarkers(sub2_scobj, only.pos=TRUE, min.pct=0.25,
                                      logfc.threshold=0.25)
 
 # violin plots
-VlnPlot(sub2_scobj, features=sub2_genelist, cols=sub2_custom_color_palette,
+VlnPlot(sub2_scobj, features=gen_gene_list, cols=sub2_custom_color_palette,
         idents=NULL)
 VlnPlot(sub2_scobj, features=cytotoxic_gene_list, cols=sub2_custom_color_palette,
         idents=sub2_clusters_of_interest)
@@ -42,7 +40,8 @@ VlnPlot(sub2_scobj, features=traffic_gene_list, cols=sub2_custom_color_palette,
 sub2_scobj.markers %>%
   group_by(cluster) %>%
   top_n(n=10, wt=avg_log2FC) -> sub2_top10
-DoHeatmap(sub2_scobj, features=sub2_top10$gene, cols=sub2_custom_color_palette) + NoLegend()
+DoHeatmap(sub2_scobj, features=sub2_top10$gene, 
+          group.colors=custom_color_palette) + NoLegend()
 
 # find all markers distinguishing cluster Trm and 0
 cluster2v0_sub2.markers <- FindMarkers(sub2_scobj, ident.1=2, ident.2=0, 

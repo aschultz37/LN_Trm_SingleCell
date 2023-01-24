@@ -166,21 +166,19 @@ write.csv(cluster8.markers.sig, "LN/output/cluster8.csv", row.names=TRUE)
 #                                test.use="roc", only.pos=TRUE)
 
 # expression probability distributions across clusters
-genelist = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1", 
-             "Cd8a", "Thy1", "Ptprc", "Cd3e")
-VlnPlot(scobj, features=genelist)
+VlnPlot(scobj, features=gen_gene_list)
 
 # plot log transformed counts
-VlnPlot(scobj, features=genelist, slot="counts", log=TRUE)
+VlnPlot(scobj, features=gen_gene_list, slot="counts", log=TRUE)
 
 # visualize feature expression on tSNE or PCA plot
-FeaturePlot(scobj, features=genelist)
+FeaturePlot(scobj, features=gen_gene_list)
 # to detect naive T cells
 FeaturePlot(scobj, features="Cd44")
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 # ridge plot
-RidgePlot(scobj, features=genelist, ncol=3)
+RidgePlot(scobj, features=gen_gene_list, ncol=3)
 
 # generate expression heatmap for top 10 markers for each cluster
 scobj.markers %>%
