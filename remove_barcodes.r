@@ -3,10 +3,16 @@
 #replace sub1_scobj with whatever object you want to remove from, or readRDS()
 rmbc_scobj <- sub1_scobj
 
-barcodes_to_remove_df = read.csv("clust7cells.csv", )
+# read .csv containing barcodes (or create it from another source)
+barcodes_to_remove_df = read.csv("clust7cells.csv")
+
 # at this point, make sure the only column is the list of barcodes (no index)
+# this line may or may not be necessary depending on input format
+# ensure the column name after $ is correct in below line
 barcodes_to_remove_df$X <- NULL
+
 # convert dataframe to class "character"
+# ensure the column name after $ is correct in all below lines
 barcodes_to_remove = character(length(barcodes_to_remove_df$X7))
 for(i in 1:length(barcodes_to_remove_df$X7)){
   barcodes_to_remove[i] = as.character(barcodes_to_remove_df$X7[i])
