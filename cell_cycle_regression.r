@@ -102,4 +102,8 @@ scobj_cc <- AddModuleScore(object=scobj_cc, features=list(LN_Trm_genes),
                              ctrl=100, name="LN_Trm")
 FeaturePlot(scobj_cc, features="LN_Trm1", pt.size=2.5, cols=brewer.pal(n=11, name="RdBu"))
 
+# find all the cells (barcodes) in cluster 7 so can remove them from 
+# the non-regressed data
+write.csv(CellsByIdentities(object=scobj_cc, idents=7), "~/Downloads/clust7cells.csv")
+
 saveRDS(scobj_cc, "LN/output/2022-12-29_LN_sub1_cc_figs.rds")
