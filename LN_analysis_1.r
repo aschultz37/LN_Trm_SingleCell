@@ -49,13 +49,13 @@ sub1_scobj.markers <- FindAllMarkers(sub1_scobj, only.pos=TRUE, min.pct=0.25,
                                      logfc.threshold=0.25)
 
 # expression probability distributions across clusters
-clusters_of_interest = c("0", "1", "2", "3")
+clusters_of_interest = c("0", "1", "2", "3", "5") # exclude cycling cells in 4
 VlnPlot(sub1_scobj, features=gen_gene_list, cols=custom_color_palette,
         idents=NULL)
 VlnPlot(sub1_scobj, features=cytotoxic_gene_list, cols=custom_color_palette,
-        idents=clusters_of_interest)
+        idents=NULL)
 VlnPlot(sub1_scobj, features=traffic_gene_list, cols=custom_color_palette,
-        idents=clusters_of_interest)
+        idents=NULL)
 
 # visualize feature expression on tSNE or PCA plot
 FeaturePlot(sub1_scobj, features=gen_gene_list)
@@ -64,19 +64,19 @@ FeaturePlot(sub1_scobj, features=traffic_gene_list)
 
 # visualize LN_Trm genes in feature plots
 # FeaturePlot for list of genes of arbitrary length (groups of 12)
-final_index <- 0
-for(i in 1:length(LN_Trm_genes)){
-  if((i %% 12) == 0){
-    print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i]))
-    final_index <- i
-  }
-}
-FeaturePlot(sub1_scobj, 
-            features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)])
+# final_index <- 0
+# for(i in 1:length(LN_Trm_genes)){
+#   if((i %% 12) == 0){
+#     print(FeaturePlot(sub1_scobj, features=LN_Trm_genes[(i-11):i]))
+#     final_index <- i
+#   }
+# }
+# FeaturePlot(sub1_scobj, 
+#             features=LN_Trm_genes[(final_index+1):length(LN_Trm_genes)])
 
 
 # to detect naive T cells
-FeaturePlot(sub1_scobj, pt.size=2.5, features="Cd44")
+# FeaturePlot(sub1_scobj, pt.size=2.5, features="Cd44")
 
 # N.B. can also try RidgePlot, CellScatter, and DotPlot to view dataset
 # ridge plot
@@ -92,20 +92,23 @@ DoHeatmap(sub1_scobj, features=sub1_top10$gene,
 # find all markers distinguishing cluster 0 and 1
 cluster0v1_sub1.markers <- FindMarkers(sub1_scobj, ident.1=0, ident.2=c(1), 
                                        min.pct=0.25)
-cluster0v1_sub1.markers.sig <- subset(cluster0v1_sub1.markers, p_val_adj<=0.05)
-write.csv(cluster0v1_sub1.markers.sig, "LN/output/cluster0v1_sub1.csv", 
+# cluster0v1_sub1.markers.sig <- subset(cluster0v1_sub1.markers, p_val_adj<=0.05)
+write.csv(cluster0v1_sub1.markers, "LN/output/cluster0v1_sub1.csv", 
           row.names=TRUE)
 
-# find all markers distinguishing cluster 2 from 0 and 1
-cluster2v01_sub1.markers <- FindMarkers(sub1_scobj, ident.1=2, ident.2=c(0, 1), 
+# find all markers distinguishing cluster 2 from other T cells (0, 1, 3, 5)
+cluster2vTcirc_sub1.markers <- FindMarkers(sub1_scobj, ident.1=2, 
+                                        ident.2=c(0, 1, 3, 5), 
                                         min.pct=0.25)
-cluster2v01_sub1.markers.sig <- subset(cluster2v01_sub1.markers, p_val_adj<=0.05)
-write.csv(cluster2v01_sub1.markers.sig, "LN/output/cluster2v01_sub1.csv", 
+# cluster2vTcirc_sub1.markers.sig <- subset(cluster2vTcirc_sub1.markers, 
+#                                           p_val_adj<=0.05)
+write.csv(cluster2vTcirc_sub1.markers, "LN/output/cluster2vTcirc_sub1.csv", 
           row.names=TRUE)
 
 # calculate module score for feature expression
 sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(LN_Trm_genes),
                              ctrl=100, name="LN_Trm")
-FeaturePlot(sub1_scobj, features="LN_Trm1", pt.size=2.5, cols=brewer.pal(n=11, name="RdBu"))
+FeaturePlot(sub1_scobj, features="LN_Trm1", pt.size=2.5, 
+            cols=rev(brewer.pal(n=11, name="RdBu")))
 
 saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
