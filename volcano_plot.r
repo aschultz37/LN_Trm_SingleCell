@@ -10,7 +10,7 @@ vp_scobj <- readRDS("LN/output/2022-12-29_LN_sub1_cc_figs.rds")
 # calculate markers/DEG for desired clusters
 cluster2vT_vp.markers <- FindMarkers(vp_scobj, 
                                       ident.1=2, 
-                                      ident.2=c(0, 1, 3, 4), 
+                                      ident.2=c(0, 1, 3, 5), 
                                       min.pct=0.25)
 # filtering steps if wanted
 # cluster2vT_vp.markers.pval <- subset(cluster2vT_vp.markers, 
@@ -35,7 +35,7 @@ EnhancedVolcano(cluster2vT_vp.markers,
 #                 lab=cxcr6_deg$X,
 #                 x='log2FoldChange',
 #                 y='padj',
-#                 title="Trm vs Other T CXCR6",
+#                 title="CXCR6 Trm vs Other T",
 #                 pCutoff=0.01,
 #                 FCcutoff=0.5,
 #                 pointSize=3.0,
