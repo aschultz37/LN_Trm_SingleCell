@@ -27,3 +27,6 @@ for(i in 1:length(barcodes_to_remove_df$X7)){
 
 # remove all the cells with barcodes in barcodes_to_remove
 rmbc_scobj <- rmbc_scobj[, !(rmbc_scobj@assays$RNA@data@Dimnames[[2]] %in% barcodes_to_remove)]
+
+# now, if wanted, put this data back into old object to re-analyze
+# sub1_scobj <- rmbc_scobj
