@@ -26,3 +26,5 @@ cytotoxic_gene_list = c("Prf1", "Gzmb", "Gzmk", "Ccl4", "Ccl5", "Csf1")
 traffic_gene_list = c("S1pr1", "Sell", "Ccr7", "Cxcr4", "Cxcr3", "Cxcr6")
 gen_gene_list = c("Itgae", "Ccr7", "Klf2", "Cxcr6", "S1pr1", 
                   "Cd8a", "Thy1", "Ptprc", "Cd3e")
+custom_color_palette =  c("#1B9E77", "#D95F02", "#7570B3", "#CA00C4",
+                          "#66A61E", "#E6AB02", "#A6761D", "#666666")
