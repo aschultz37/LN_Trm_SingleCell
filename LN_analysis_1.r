@@ -108,7 +108,19 @@ write.csv(cluster2vTcirc_sub1.markers, "LN/output/cluster2vTcirc_sub1.csv",
 # calculate module score for feature expression
 sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(LN_Trm_genes),
                              ctrl=100, name="LN_Trm")
+sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(Tcm_genes),
+                             ctrl=100, name="Tcm.Tem")
+sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(Tem_genes),
+                             ctrl=100, name="Tem.Tcm")
+sub1_scobj <- AddModuleScore(object=sub1_scobj, features=list(TGFb_genes),
+                             ctrl=100, name="TGFb")
 FeaturePlot(sub1_scobj, features="LN_Trm1", pt.size=2.5, 
+            cols=rev(brewer.pal(n=11, name="RdBu")))
+FeaturePlot(sub1_scobj, features="Tcm.Tem1", pt.size=2.5, 
+            cols=rev(brewer.pal(n=11, name="RdBu")))
+FeaturePlot(sub1_scobj, features="Tem.Tcm1", pt.size=2.5, 
+            cols=rev(brewer.pal(n=11, name="RdBu")))
+FeaturePlot(sub1_scobj, features="TGFb1", pt.size=2.5, 
             cols=rev(brewer.pal(n=11, name="RdBu")))
 
 saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
