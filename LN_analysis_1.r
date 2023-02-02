@@ -6,9 +6,9 @@
 # library(patchwork)
 
 # REMOVE CLUSTERS AND RE-ANALYZE
-sub1_scobj = readRDS("LN/output/2022-12-29_LN_sub1.rds")
+sub1_scobj <- readRDS("LN/output/2022-12-29_LN_sub1.rds")
 # Remove clusters 4, 7, 8 and keep the remaining for new analysis
-sub1_scobj = subset(x=scobj, idents=c(4, 7, 8), invert=TRUE)
+sub1_scobj <- subset(x=scobj, idents=c(4, 7, 8), invert=TRUE)
 
 # reidentify highly variable features
 sub1_scobj <- FindVariableFeatures(sub1_scobj, selection.method="vst", nfeatures=2500)
@@ -49,7 +49,7 @@ sub1_scobj.markers <- FindAllMarkers(sub1_scobj, only.pos=TRUE, min.pct=0.25,
                                      logfc.threshold=0.25)
 
 # expression probability distributions across clusters
-clusters_of_interest = c("0", "1", "2", "3", "5") # exclude cycling cells in 4
+clusters_of_interest <- c("0", "1", "2", "3", "5") # exclude cycling cells in 4
 VlnPlot(sub1_scobj, features=gen_gene_list, cols=custom_color_palette,
         idents=NULL)
 VlnPlot(sub1_scobj, features=cytotoxic_gene_list, cols=custom_color_palette,
@@ -122,5 +122,6 @@ FeaturePlot(sub1_scobj, features="Tem.Tcm1", pt.size=2.5,
             cols=rev(brewer.pal(n=11, name="RdBu")))
 FeaturePlot(sub1_scobj, features="TGFb1", pt.size=2.5, 
             cols=rev(brewer.pal(n=11, name="RdBu")))
+FeaturePlot(sub1_scobj, features="Itgae", pt.size=2.5)
 
 saveRDS(sub1_scobj, "LN/output/2022-12-29_LN_sub1.rds")
