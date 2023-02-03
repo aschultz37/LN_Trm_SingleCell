@@ -1,3 +1,5 @@
+library(EnhancedVolcano)
+
 # Run LN_analysis_init.r first!
 
 # Read in object with finalized data
@@ -52,3 +54,9 @@ proc_scobj.markers %>%
   top_n(n=10, wt=avg_log2FC) -> proc_top10
 DoHeatmap(proc_scobj, features=proc_top10$gene, 
           group.colors=custom_color_palette) + NoLegend()
+
+# Volcano plot
+cluster2vT_vp.markers <- FindMarkers(proc_scobj, 
+                                     ident.1=2, 
+                                     ident.2=c(0, 1, 3, 5), 
+                                     min.pct=0.25)
