@@ -60,3 +60,13 @@ cluster2vT_vp.markers <- FindMarkers(proc_scobj,
                                      ident.1=2, 
                                      ident.2=c(0, 1, 3, 5), 
                                      min.pct=0.25)
+EnhancedVolcano(cluster2vT_vp.markers,
+                lab=rownames(cluster2vT_vp.markers),
+                x='avg_log2FC',
+                y='p_val_adj',
+                title="Trm vs Other T",
+                pCutoff=0.01,
+                FCcutoff=0.5,
+                pointSize=3.0,
+                labSize=5.0,
+                selectLab=NULL)
