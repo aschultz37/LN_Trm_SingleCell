@@ -1,0 +1,439 @@
+---
+title: "LN Trm scRNA-seq Analysis"
+author: "Austin Schultz (GitHub: aschultz37)"
+date: "February 3, 2023"
+output: html_document
+---
+
+# Initialization Code
+Run this section once **at the beginning of each R session**.
+```{r initialization, echo=TRUE, message=FALSE, results='hide'}
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(RColorBrewer)
+library(EnhancedVolcano)
+
+custom_color_palette <-  c("#1B9E77", "#D95F02", "#7570B3", "#CA00C4",
+                          "#66A61E", "#E6AB02", "#A6761D", "#666666", "#194D33")
+
+LN_Trm_genes <- c("Acap1", "Actn2", "Amica1", "Arhgef1", "Atxn7l3b", "Aw112010",
+                  "B4galnt1", "Bcl11b", "Cbx3", "Ccnd2", "Ccr10", "Cd27", "Cd7",
+                  "Cd74", "Chd3", "Cirbp", "Clec2d", "Crot", "Csf1", "Cxcr3",
+                  "Cxcr6", "Eif5", "Evl", "Fam189b", "Fubp1", "Fyb", "Gramd1a",
+                  "Sema4a","Gstp1", "Shisa5", "H2-T23", "Sipa1", "Hmgn1",
+                  "Slfn2", "Hmha1", "Sp100", "Hsp90b1", "Spcs2", "Id2", "Srrm2",
+                  "Ifitm10", "Stap1", "Ikzf3", "Tbc1d10c", "Il16", "Tesc",
+                  "Il18r1", "Tnfaip8", "Il7r", "Tnrc6a", "Irf2bpl", "Tsc22d4",
+                  "Itgae", "Uba52", "Itgal", "Ucp2", "Itm2c", "Wbp1", "Lfng",
+                  "Xist", "Lpar6", "Ypel3", "Lrrc58", "Zbtb7a", "Ltb", "Znrf1",
+                  "Ly6a", "Ly6e", "Ly6g5b", "Malat1", "Mbnl1", "Mrpl52", "Mxd4",
+                  "Mycbp2", "N4bp2l2", "N4bp2l2", "Ndufa3", "Ndufa5", "Nktr",
+                  "Nudcd3", "Ogt", "Pdcd4", "Pdia3", "Pdia6", "Ptpn7", "Ptprc",
+                  "Rapgef6", "Rbpj", "Rgs10", "Rpl15", "Rpl35", "Rpl38",
+                  "Rps28", "Rps29", "Sash3")
+
+TGFb_genes <- c("Mcpt2","Cdh1","Spsb1","Vipr2","Gpr56","Src","Ppp2r2c","Lrig1",
+                "Itgae","Agap1","Ncmap","Pmepa1","Sema6d","Emid1","Cd33","Dlk1",
+                "Ldlrad4","Car2","Cpd","Nt5e","Tspan9","Gsg2","Klhl30",
+                "1810011H11Rik","Osgin1","Ccl1","Litaf","Itga1","Kifc3",
+                "Hsf2bp","Asic3","Abi3","Smurf2","Phactr2","Oplah","Qpct",
+                "Tfr2","Isg20","Rnase6","Rgs1","2900026A02Rik","Mmp11",
+                "Tnfsf11","Nrarp","Cyb561","Smyd1","Kcnip2","Cx3cr1","Nek6",
+                "Nlrp1b","St8sia1","Arhgap39","Jup","Htra3","Rgs16","H2-M5",
+                "Chn2","Cish","Atp6v0a1","Skil","Dok3","Igflr1","Ccr8","Timp2",
+                "Zfyve28","Ppm1n","Hpgds","B4galnt4","Ifng","Ctnnal1","Clec12a",
+                "Exoc3l","Coro2a","Ikzf4","Adamts6","D8Ertd82e","Smpd5","Aqp3",
+                "Evpl","Ramp1","St8sia6","Xcl1","Scn1b","Rnf149","Dtx4","Gngt2",
+                "Sbk1","Tbc1d16","Tnfrsf13c","Gna12","Ermn","Neu3","Fmnl3",
+                "Cd83","Epb4.1l2","Ccdc112","Adam19","Rab26","Fam101b","Mical3",
+                "Prkcz","Grina","Slc27a6","Tgfbr3","Fgfr1","Msc","Rgs10",
+                "Lonrf1","Lax1","Kcnc1","Nphp1","Slc16a10","Kif13a","Ninj1",
+                "Smyd3","9430020K01Rik","Csgalnact1","Gpaa1","Ski","Gcnt4",
+                "Map9","Egr3","Fam161a","Egr1","Fndc3a","Mapkapk3","Ctss",
+                "Hnrnpll","Galm","Dusp2","Stom","Esm1","1700049G17Rik",
+                "Plekho1","Med10","Smtn","Gpr34","Sepn1","Egr2","Prrt2","Aen",
+                "Cd101","Gtf2ird1","Tiam1","Camkk1","D430042O09Rik","Fam214b",
+                "Matk","Ralgps1","Dapk2","Usp6nl","Foxred2","Wdyhv1","Znrf1",
+                "Tjp1","Irf8","Hemk1","Pgap1","Accs","Aim2","Per3","Zfr2",
+                "Lgalsl","1700001L05Rik","Zfp820","D3Ertd254e","Gcnt1",
+                "Slc41a2","Ttc39b","Gclm","Peg13","Slc9a1","Adora3","Cers6",
+                "Ccrn4l","Cd96","Golim4","Lpcat2","Lsr","Acsbg1","Eef2k",
+                "Plekhf1","Rbm20","Ssx2ip","Ankrd50","Igfbp4","Inpp4b",
+                "Irf2bpl","Pygl","Zfp1","Golm1","Gpr68","Ptgfrn","Tsc22d1",
+                "Abca1","Fam124b","Itpripl2","Bcl6","Lysmd2","Trp53inp2",
+                "Zdhhc13","Bpgm","F2r","Frmd4b","Ctsw","Swap70","Frmd6","Gas7",
+                "Gdpd5","Spire1","Tet3","Batf3","Dstyk","Luzp1","Mgat5","Ptpre",
+                "Ralgps2","Mif4gd","Stat1","Ttc3","Abhd15","Cerk","Adssl1",
+                "Pcyt1b","Rai1","Blcap","Map3k14","Rnf19b","Scai","Tmem57",
+                "Atp6v1g2","Chst12","Fam20a","Gtf3c1","Trp53inp1","Wdr78",
+                "Aars2","Cd244","Ly6g5b","Tbx6","Usp22","Zfp827",
+                "1600014C10Rik","Als2","Arhgef5","B4galt5","Nfat5","Prkacb",
+                "Rgs2","Slc9a3r1","Soat1","Tctn3","Ttc39c","Cotl1","Ldlrap1",
+                "Ncf1","Iigp1","Ikzf3","Ipcef1","Irf4","Abi2","Runx3","Ypel3",
+                "Entpd1","Fut8","Inpp5f","Apol7e","Arhgef12","Nrp1","Slc26a11",
+                "Tnfrsf1b","Cd160","Gfod1","Gm12185","H6pd","Pmm1","Tmem2",
+                "Ublcp1","Dennd3","Gramd1a","Idh2","Ppip5k1","Slc39a13",
+                "Baiap3","Extl3","Mxd1","Nipal1","Rrp1b","Twsg1","Cdc42bpg",
+                "Celsr1","Ehd1","Kit","Slc22a15","Tmcc1","Camsap2","Klhl25",
+                "Ncf4","Plcxd2","Rab11fip4","Specc1","Fam3c","Fuca2","Pde4a",
+                "Prr12","Ctnnb1","Egln3","Fam46a","Fbxo25","Gprin3","Scly",
+                "AW112010","Cd1d1","Lrrc61","Clstn1","Exosc4","Smad7","Susd3",
+                "Traf4","Vasp","Gne","Gpbp1l1","Prkch","Rab37","Rbpj","Usp11",
+                "AA467197","Bmpr2","Cd8a","Dpp9","Inpp5d","Kif1b","Lasp1",
+                "Rftn1","Wee1","Fasl","Nbas","Plscr1","Prkdc","Rhoh","Spcs2",
+                "Suox","Tbc1d4","Tgif1","Anp32a","Lnpep","Myo5a","Rreb1",
+                "Zfp706","Ermp1","Fam149b","Glrx","Pacsin2","Plekha2","Sorl1",
+                "Dnajc9","Nbeal1","Plod2","Ssh2","Trappc10","Ercc6","Fchsd2",
+                "Gfi1","Ubn2","Vps54","Actr1b","Ccni","Cd2bp2","Tnfsf10",
+                "Acot11","Atad2","Lgals9","Nup153","Gtpbp1")
+```
+
+# Initial QC, Pre-Processing, and Run
+Create the Seurat Object.
+```{r create_scobj}
+scobj.data <- Read10X(data.dir="LN/filtered/")
+scobj <- CreateSeuratObject(counts=scobj.data, project="2022-12-29_LN", 
+                         min.cells=3, min.features=200)
+```
+
+## QC & Filtering
+Calculate the % mitochondrial and ribosomal genes for each cell.
+```{r qc_calc}
+scobj[["percent.mt"]] <- PercentageFeatureSet(scobj, pattern="^mt-")
+scobj[["percent.rps"]] <- PercentageFeatureSet(scobj, pattern="Rps")
+scobj[["percent.rpl"]] <- PercentageFeatureSet(scobj, pattern="Rpl")
+```
+
+Visualize the QC features as violin plots.
+```{r qc_vln}
+VlnPlot(scobj, features=c("nFeature_RNA", "nCount_RNA"), ncol=2)
+VlnPlot(scobj, features=c("percent.mt", "percent.rps", "percent.rpl"), ncol=3)
+```
+
+Visualize the QC features as FeatureScatter plots.
+```{r qc_ftr}
+plot1 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="percent.mt")
+plot2 <- FeatureScatter(scobj, feature1="nCount_RNA", feature2="nFeature_RNA")
+plot1 + plot2
+```
+
+Apply filters and normalize data.
+```{r qc_filter}
+scobj <- subset(scobj, subset=(nFeature_RNA > 100 & nFeature_RNA < 6000 
+                & percent.mt < 5 & percent.rps < 20 & percent.rpl < 23))
+scobj <- NormalizeData(scobj, normalization.method="LogNormalize",
+                       scale.factor=10000)
+```
+
+## Identify Highly Variable Features
+```{r find_hvg}
+scobj <- FindVariableFeatures(scobj, selection.method="vst", nfeatures=2500)
+```
+
+## Scale Data
+```{r scale_data}
+all.genes <- rownames(scobj)
+scobj <- ScaleData(scobj, features=all.genes)
+```
+
+
+## Linear Dimensional Reduction & Determine Dimensionality
+Perform PCA.
+```{r pca}
+scobj <- RunPCA(scobj, features=VariableFeatures(object=scobj))
+```
+
+Jackstraw and Elbow Plots to visualize dimensionality of dataset.
+```{r jackstraw}
+scobj <- JackStraw(scobj, dims=30, num.replicate=100)
+scobj <- ScoreJackStraw(scobj, dims=1:30)
+JackStrawPlot(scobj, dims=1:30)
+ElbowPlot(scobj, ndims=30)
+```
+
+## Cluster Cells
+Run clustering and UMAP algorithms. Dims based on Jackstraw and Elbow plots.
+```{r cluster}
+scobj <- FindNeighbors(scobj, dims=1:15) 
+scobj <- FindClusters(scobj, resolution=0.3)
+scobj <- RunUMAP(scobj, dims=1:15)
+```
+
+Show the UMAP and the number of cells in each cluster.
+```{r show_umap}
+DimPlot(scobj, reduction="umap", pt.size=2.5, cols=custom_color_palette)
+table(Idents(scobj))
+```
+
+## Generate Initial Heatmap
+Find markers for all clusters.
+```{r find_markers}
+scobj.markers <- FindAllMarkers(scobj, only.pos=TRUE, min.pct=0.25,
+                                logfc.threshold=0.25)
+```
+
+Generate heatmap for top 10 genes in all clusters.
+```{r heatmap}
+scobj.markers %>%
+    group_by(cluster) %>%
+    top_n(n=10, wt=avg_log2FC) -> top10
+DoHeatmap(scobj, features=top10$gene, 
+          group.colors=custom_color_palette) + NoLegend()
+```
+
+## Remove Non-CD8+ T Cells --> Subset 1
+```{r remove_clusters}
+sub1_scobj <- subset(x=scobj, idents=c(4, 7, 8), invert=TRUE)
+```
+
+# Re-Run Analysis on Subset 1 (Sub1)
+Determine highly variables genes.
+```{r sub1_hvg}
+sub1_scobj <- FindVariableFeatures(sub1_scobj, selection.method="vst", 
+                                   nfeatures=2500)
+```
+
+Rescale data.
+```{r sub1_rescale}
+sub1_all.genes <- rownames(sub1_scobj)
+sub1_scobj <- ScaleData(sub1_scobj, features=sub1_all.genes)
+```
+
+Re-run PCA.
+```{r sub1_pca}
+sub1_scobj <- RunPCA(sub1_scobj, features=VariableFeatures(object=sub1_scobj))
+```
+
+Re-run Jackstraw and Elbow plots to determine new dimensionality.
+```{r sub1_jackstraw}
+sub1_scobj <- JackStraw(sub1_scobj, dims=30, num.replicate=100)
+sub1_scobj <- ScoreJackStraw(sub1_scobj, dims=1:30)
+JackStrawPlot(sub1_scobj, dims=1:30)
+ElbowPlot(sub1_scobj, ndims=30)
+```
+
+Rerun clustering and UMAP algorithms. Dims based on Jackstraw and Elbow plots.
+```{r sub1_cluster}
+sub1_scobj <- FindNeighbors(sub1_scobj, dims=1:25)
+sub1_scobj <- FindClusters(sub1_scobj, resolution=0.3)
+sub1_scobj <- RunUMAP(sub1_scobj, dims=1:25)
+```
+
+Show the UMAP and the number of cells in each cluster.
+```{r sub1_umap}
+DimPlot(sub1_scobj, reduction="umap", pt.size=2.5, cols=custom_color_palette)
+table(Idents(sub1_scobj))
+```
+
+Find markers for all clusters.
+```{r sub1_find_markers}
+sub1_scobj.markers <- FindAllMarkers(sub1_scobj, only.pos=TRUE, min.pct=0.25,
+                                     logfc.threshold=0.25)
+```
+
+Generate heatmap for top 10 genes in all clusters.
+```{r sub1_heatmap}
+sub1_scobj.markers %>%
+  group_by(cluster) %>%
+  top_n(n=10, wt=avg_log2FC) -> sub1_top10
+DoHeatmap(sub1_scobj, features=sub1_top10$gene, 
+          group.colors=custom_color_palette) + NoLegend()
+```
+
+# Perform Cell Cycle Regression
+Cluster 4 has two top genes (Top2a, Mki67) implicated in cell cycle.
+This code attempts to regress these signals from the dataset.
+The result was not used for further analysis, but additional B cells are
+discovered in the process, which need to be removed from Subset 1.
+
+Set up a copy of sub1_scobj and generate cell cycle gene lists in proper format.
+```{r cc_setup}
+scobj_cc <- sub1_scobj
+
+s.genes <- tolower(cc.genes$s.genes)
+for(i in 1:length(s.genes)){
+  substr(s.genes[i],1,1) <- toupper(substr(s.genes[i], 1, 1))
+}
+
+g2m.genes <- tolower(cc.genes$g2m.genes)
+for(i in 1:length(g2m.genes)){
+  substr(g2m.genes[i],1,1) <- toupper(substr(g2m.genes[i], 1, 1))
+}
+```
+
+Perform the cell cycle scoring and regression.
+```{r cc_regression}
+scobj_cc <- CellCycleScoring(scobj_cc, s.features=s.genes, 
+                               g2m.features=g2m.genes, set.ident=FALSE)
+scobj_cc <- ScaleData(scobj_cc, vars.to.regress=c("S.Score", "G2M.Score"), 
+                      features=rownames(scobj_cc))
+```
+
+Rerun all analysis from Subset 1 on the regressed dataset.
+```{r cc_analysis}
+scobj_cc <- RunPCA(scobj_cc, features=VariableFeatures(object=scobj_cc))
+scobj_cc <- JackStraw(scobj_cc, dims=30, num.replicate=100)
+scobj_cc <- ScoreJackStraw(scobj_cc, dims=1:30)
+JackStrawPlot(scobj_cc, dims=1:30)
+ElbowPlot(scobj_cc, ndims=30)
+
+scobj_cc <- FindNeighbors(scobj_cc, dims=1:25)
+scobj_cc <- FindClusters(scobj_cc, resolution=0.3)
+
+scobj_cc <- RunUMAP(scobj_cc, dims=1:25)
+DimPlot(scobj_cc, reduction="umap", pt.size=2.5, cols=custom_color_palette)
+table(Idents(scobj_cc))
+
+scobj_cc.markers <- FindAllMarkers(scobj_cc, only.pos=TRUE, min.pct=0.25,
+                                     logfc.threshold=0.25)
+scobj_cc.markers %>%
+  group_by(cluster) %>%
+  top_n(n=10, wt=avg_log2FC) -> scobj_cc_top10
+DoHeatmap(scobj_cc, features=scobj_cc_top10$gene, 
+          group.colors=custom_color_palette) + NoLegend()
+```
+
+Cluster 7 contains B cells. Write the barcodes of cells in the cluster
+so they can be removed from the non-regressed dataset.
+```{r cc_write_Bcells}
+write.csv(CellsByIdentities(object=scobj_cc, idents=7), "B_cell_barcodes.csv")
+```
+
+# Remove B-Cells by Barcode
+Remove the cells from Subset 1 object for simpler re-analysis.
+```{r remove_barcodes}
+barcodes_to_remove_df = read.csv("B_cell_barcodes.csv")
+barcodes_to_remove_df$X <- NULL
+
+barcodes_to_remove = character(length(barcodes_to_remove_df$X7))
+for(i in 1:length(barcodes_to_remove_df$X7)){
+  barcodes_to_remove[i] = as.character(barcodes_to_remove_df$X7[i])
+}
+
+sub1_scobj <- sub1_scobj[, !(sub1_scobj@assays$RNA@data@Dimnames[[2]] 
+                             %in% barcodes_to_remove)]
+```
+
+# Re-Run Subset 1 Analysis
+This section is a copy of the code from above.
+
+Determine highly variables genes.
+```{r rmbc_hvg}
+sub1_scobj <- FindVariableFeatures(sub1_scobj, selection.method="vst", 
+                                   nfeatures=2500)
+```
+
+Rescale data.
+```{r rmbc_rescale}
+sub1_all.genes <- rownames(sub1_scobj)
+sub1_scobj <- ScaleData(sub1_scobj, features=sub1_all.genes)
+```
+
+Re-run PCA.
+```{r rmbc_pca}
+sub1_scobj <- RunPCA(sub1_scobj, features=VariableFeatures(object=sub1_scobj))
+```
+
+Re-run Jackstraw and Elbow plots to determine new dimensionality.
+```{r rmbc_jackstraw}
+sub1_scobj <- JackStraw(sub1_scobj, dims=30, num.replicate=100)
+sub1_scobj <- ScoreJackStraw(sub1_scobj, dims=1:30)
+JackStrawPlot(sub1_scobj, dims=1:30)
+ElbowPlot(sub1_scobj, ndims=30)
+```
+
+Rerun clustering and UMAP algorithms. Dims based on Jackstraw and Elbow plots.
+```{r rmbc_cluster}
+sub1_scobj <- FindNeighbors(sub1_scobj, dims=1:25)
+sub1_scobj <- FindClusters(sub1_scobj, resolution=0.3)
+sub1_scobj <- RunUMAP(sub1_scobj, dims=1:25)
+```
+
+# Make Final Plots
+Make copy of object for readability.
+```{r copy_proc_obj}
+proc_scobj <- sub1_scobj
+```
+
+Make an object that combines the Other T clusters (0, 1, 3, 5) into one cluster
+(6), excluding the cluster of cycling cells (4).
+```{r comb_obj}
+comb_scobj <- proc_scobj
+comb_scobj_ids <- c("6", "6", "2", "6", "4", "6")
+names(comb_scobj_ids) <- levels(comb_scobj)
+comb_scobj <- RenameIdents(comb_scobj, comb_scobj_ids)
+```
+
+UMAP and number of cells per cluster.
+```{r final_umap}
+DimPlot(proc_scobj, reduction="umap", pt.size=2.5, cols=custom_color_palette)
+table(Idents(proc_scobj))
+```
+
+LN Trm module score.
+```{r final_Trm_modulescore}
+proc_scobj <- AddModuleScore(object=proc_scobj, features=list(LN_Trm_genes),
+                             ctrl=100, name="LN_Trm")
+FeaturePlot(proc_scobj, features="LN_Trm1", pt.size=2.5, 
+            cols=rev(brewer.pal(n=11, name="RdBu")))
+```
+
+TGFb module score.
+```{r final_tgfb_modulescore}
+proc_scobj <- AddModuleScore(object=proc_scobj, features=list(TGFb_genes),
+                             ctrl=100, name="TGFb")
+FeaturePlot(proc_scobj, features="TGFb1", pt.size=2.5, 
+            cols=rev(brewer.pal(n=11, name="RdBu")))
+```
+
+Violin plots with the combined cluster object.
+```{r final_vln}
+clusters_of_interest <- c("2", "6") # exclude cycling cells in 4
+violin_colors <- c("#FFFFFF", "#7570B3")
+VlnPlot(comb_scobj, features=c("Gzmb", "Gzmk", "Prf1"), 
+        cols=violin_colors, idents=clusters_of_interest)
+VlnPlot(comb_scobj, features=c("Csf1", "Ccl4", "Ccl5"), 
+        cols=violin_colors, idents=clusters_of_interest)
+VlnPlot(comb_scobj, features=c("Klf2", "S1pr1", "Tcf7"), 
+        cols=violin_colors, idents=clusters_of_interest)
+```
+
+Feature plots that export individually.
+```{r final_feature}
+feature_gene_list <- c("Ccr7", "Sell", "S1pr1", "Gzmb",
+                       "Cxcr6", "Itgae", "Csf1")
+for(i in 1:length(feature_gene_list)){
+  print(FeaturePlot(proc_scobj, features=feature_gene_list[i], pt.size=2.5))
+}
+```
+
+Heatmap of top 10 genes per cluster.
+```{r final_heatmap}
+proc_scobj.markers <- FindAllMarkers(proc_scobj, only.pos=TRUE, min.pct=0.25,
+                                     logfc.threshold=0.25)
+proc_scobj.markers %>%
+  group_by(cluster) %>%
+  top_n(n=10, wt=avg_log2FC) -> proc_top10
+DoHeatmap(proc_scobj, features=proc_top10$gene, 
+          group.colors=custom_color_palette) + NoLegend()
+```
+
+Volcano plot of differentially expressed genes between Trm (cluster 2) and
+Other T (clusters 0, 1, 3, 5).
+```{r final_volcano}
+cluster2vT_vp.markers <- FindMarkers(proc_scobj, 
+                                     ident.1=2, 
+                                     ident.2=c(0, 1, 3, 5), 
+                                     min.pct=0.25)
+EnhancedVolcano(cluster2vT_vp.markers,
+                lab=rownames(cluster2vT_vp.markers),
+                x='avg_log2FC',
+                y='p_val_adj',
+                title="Trm vs Other T",
+                pCutoff=0.01,
+                FCcutoff=0.5,
+                pointSize=3.0,
+                labSize=5.0,
+                selectLab=NULL)
+```
