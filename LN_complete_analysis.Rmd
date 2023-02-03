@@ -303,13 +303,7 @@ write.csv(CellsByIdentities(object=scobj_cc, idents=7), "B_cell_barcodes.csv")
 # Remove B-Cells by Barcode
 Remove the cells from Subset 1 object for simpler re-analysis.
 ```{r remove_barcodes}
-barcodes_to_remove_df = read.csv("B_cell_barcodes.csv")
-barcodes_to_remove_df$X <- NULL
-
-barcodes_to_remove = character(length(barcodes_to_remove_df$X7))
-for(i in 1:length(barcodes_to_remove_df$X7)){
-  barcodes_to_remove[i] = as.character(barcodes_to_remove_df$X7[i])
-}
+barcodes_to_remove <- as.character(read.csv("B_cell_barcodes.csv")$X7)
 
 sub1_scobj <- sub1_scobj[, !(sub1_scobj@assays$RNA@data@Dimnames[[2]] 
                              %in% barcodes_to_remove)]
