@@ -11,7 +11,8 @@ sub1_scobj <- readRDS("LN/output/2022-12-29_LN_sub1.rds")
 sub1_scobj <- subset(x=scobj, idents=c(4, 7, 8), invert=TRUE)
 
 # reidentify highly variable features
-sub1_scobj <- FindVariableFeatures(sub1_scobj, selection.method="vst", nfeatures=2500)
+sub1_scobj <- FindVariableFeatures(sub1_scobj, selection.method="vst", 
+                                   nfeatures=2500)
 
 # find top 10 most variable genes
 sub1_top10 <- head(VariableFeatures(sub1_scobj), 10)
