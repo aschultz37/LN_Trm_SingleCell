@@ -1,0 +1,88 @@
+---
+title: "LN Trm scRNA-seq Analysis"
+author: "Austin Schultz (GitHub: aschultz37)"
+date: "February 3, 2023"
+output: html_document
+---
+
+# Initialization Code
+Run once per R session.
+```{r initialize, echo=TRUE, message=FALSE, results='hide'}
+library(SCENIC)
+
+setwd("/gpfs/home/acs9950/singlecell/2022-12-29/SCENIC/")
+
+# Run commented code only if RDS does not exist.
+# scenicOptions <- initializeScenic(org="mgi",
+#                                   dbDir="resources/cisTarget_databases")
+# motifAnnotations_mgi <- motifAnnotations
+# scenicOptions <- initializeScenic(org="mgi",
+#                                   dbDir="resources/cisTarget_databases")
+# saveRDS(scenicOptions, file="resources/scenicOptions.Rds")
+
+scenicOptions <- readRDS("resources/scenicOptions.Rds")
+```
+
+Create loom based on Seurat object. Only run if loom does not already exist.
+```{r load_seurat}
+# library(dplyr)
+# library(Seurat)
+# library(loomR)
+# library(SeuratDisk)
+# seurat_obj <- readRDS("../LN/output/2022-12-29_LN_sub1_rmbc_figs.rds")
+# lnloom <- as.loom(seurat_obj)
+```
+
+Load data from loom file.
+```{r load_loom, echo=TRUE, message=FALSE, results='hide'}
+library(SCopeLoomR)
+
+loom <- open_loom("2022-12-29.loom", mode="r+")
+exprMat <- get_dgem(loom)
+cellInfo <- get_cell_annotation(loom)
+close_loom(loom)
+```
+
+Co-expression network. This block will give an error because whoever wrote the
+package did not care to update dependencies in their code.
+```{r coexpression}
+genesKept <- geneFiltering(exprMat, scenicOptions)
+exprMat_filtered <- exprMat[genesKept, ]
+runCorrelation(exprMat_filtered, scenicOptions)
+exprMat_filtered_log <- log2(exprMat_filtered+1) 
+runGenie3(exprMat_filtered_log, scenicOptions) # causes error, run next block
+```
+
+Have to re-run this part because of the above error.
+```{r re_coexpression}
+motifAnnotations_mgi <- motifAnnotations
+runGenie3(exprMat_filtered_log, scenicOptions)
+```
+
+Build and score the GRN.
+```{r grn}
+exprMat_log <- log2(exprMat+1)
+scenicOptions@settings$dbs <- scenicOptions@settings$dbs["10kb"] # Toy run settings
+scenicOptions <- runSCENIC_1_coexNetwork2modules(scenicOptions)
+scenicOptions <- runSCENIC_2_createRegulons(scenicOptions, coexMethod=c("top5perTarget")) # Toy run settings
+scenicOptions <- runSCENIC_3_scoreCells(scenicOptions, exprMat_log)
+```
+
+Optional: binarize activity.
+```{r binarize}
+scenicOptions <- runSCENIC_4_aucell_binarize(scenicOptions)
+tsneAUC(scenicOptions, aucType="AUC") # choose settings
+```
+
+Export as loom.
+```{r export_loom}
+export2loom(scenicOptions, exprMat)
+```
+
+Save current status and settings.
+```{r save_status}
+saveRDS(scenicOptions, file="int/scenicOptions.Rds") 
+```
+
+
+
