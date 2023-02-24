@@ -107,7 +107,8 @@ regulonTargetsInfo <- loadInt(scenicOptions, "regulonTargetsInfo")
 tableSubset <- regulonTargetsInfo[highConfAnnot==TRUE]
 viewMotifs(tableSubset, options=list(pageLength=5)) 
 
-motifEnrichment_selfMotifs_wGenes <- loadInt(scenicOptions, "motifEnrichment_selfMotifs_wGenes")
+motifEnrichment_selfMotifs_wGenes <- loadInt(scenicOptions, 
+                                             "motifEnrichment_selfMotifs_wGenes")
 tableSubset <- motifEnrichment_selfMotifs_wGenes[highlightedTFs=="Dlx5"]
 viewMotifs(tableSubset) 
 
@@ -142,7 +143,8 @@ viewTable(topRegulators)
 
 # cell-type specific regulators
 # regulonAUC <- loadInt(scenicOptions, "aucell_regulonAUC")
-rss <- calcRSS(AUC=getAUC(regulonAUC), cellAnnotation=cellInfo[colnames(regulonAUC), "seuratCluster"])
+rss <- calcRSS(AUC=getAUC(regulonAUC), 
+               cellAnnotation=cellInfo[colnames(regulonAUC), "seuratCluster"])
 rssPlot <- plotRSS(rss)
 plotly::ggplotly(rssPlot$plot)
 
@@ -150,12 +152,16 @@ plotly::ggplotly(rssPlot$plot)
 # plot regulons on Seurat
 grep("Bhlhe40_extended (12g)", names(regulons), value=T)
 Bhlhe40_targets <- list(regulons[["Bhlhe40_extended (12g)"]])
-seurat.integrated <- AddModuleScore(seurat_obj, features = Bhlhe40_targets, ctrl = 50, name = "Bhlhe40_signature.list")
-FeaturePlot(seurat.integrated, features = "Bhlhe40_signature.list1", order = T, pt.size = 2) + ggtitle("Bhlhe40 regulon") + scale_colour_gradientn(colors = (brewer.pal(n = 5, name = "YlGn")))
+seurat.integrated <- AddModuleScore(seurat_obj, features = Bhlhe40_targets, 
+                                    ctrl = 50, name = "Bhlhe40_signature.list")
+FeaturePlot(seurat.integrated, features = "Bhlhe40_signature.list1", 
+            order = T, pt.size = 2.5) + 
+            ggtitle("Bhlhe40 regulon") + 
+            scale_colour_gradientn(colors = (brewer.pal(n = 9, name = "YlGn")))
 
 
 
-
+saveRDS(scenicOptions, file="int/scenicOptions.Rds")
 
 
 
