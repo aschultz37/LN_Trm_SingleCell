@@ -7,9 +7,7 @@ scenicOptions <- runSCENIC_1_coexNetwork2modules(scenicOptions)
 scenicOptions <- runSCENIC_2_createRegulons(scenicOptions, coexMethod=c("top5perTarget")) # Toy run settings
 scenicOptions <- runSCENIC_3_scoreCells(scenicOptions, exprMat_log)
 
-scenicOptions <- runSCENIC_4_aucell_binarize(scenicOptions)
-tsneAUC(scenicOptions, aucType="AUC") # choose settings
-
 export2loom(scenicOptions, exprMat)
 
 saveRDS(scenicOptions, file="int/scenicOptions.Rds") 
+saveRDS(exprMat_log, file="int/exprMat_log.Rds")

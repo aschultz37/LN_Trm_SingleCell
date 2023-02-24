@@ -21,6 +21,8 @@ SCENIC/output/
 
 *.obj
 *.Robj
+*.Rds
+*.rds
 *.h5ad
 *.pdf
 *.png
