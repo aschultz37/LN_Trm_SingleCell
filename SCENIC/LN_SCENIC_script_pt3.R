@@ -86,19 +86,6 @@ dens2d <- bkde2D(tSNE_scenic$Y, 1)$fhat
 image(dens2d, col=brewer.pal(9, "YlOrBr"), axes=FALSE)
 contour(dens2d, add=TRUE, nlevels=5, drawlabels=FALSE)
 
-# show several simultaneously (this is broken, documentation out of date)
-# par(mfrow=c(1,2))
-# 
-# regulonNames <- c("Klf2", "Nfkb1")
-# cellCol <- plotEmb_rgb(scenicOptions, regulonNames, aucType="AUC", aucMaxContrast=0.6)
-# text(-5,-23, attr(cellCol,"red"), col="red", cex=.7)
-# text(-10,-18, attr(cellCol,"green"), col="green", cex=.7)
-# 
-# regulonNames <- list(red=c("Klf2","Nfkb1"),
-#                      green=c("Irf7"),
-#                      blue=c("Bhlhe40"))
-# cellCol <- plotEmb_rgb(scenicOptions, regulonNames, aucType="Binary")
-
 regulons <- loadInt(scenicOptions, "regulons")
 regulons <- loadInt(scenicOptions, "aucell_regulons")
 head(cbind(onlyNonDuplicatedExtended(names(regulons))))
