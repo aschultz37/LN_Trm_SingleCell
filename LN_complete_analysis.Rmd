@@ -397,8 +397,12 @@ Feature plots that export individually.
 ```{r final_feature}
 feature_gene_list <- c("Ccr7", "Sell", "S1pr1", "Gzmb",
                        "Cxcr6", "Itgae", "Csf1")
+custom_rdbu_pal <- c("#67000D", "#A50F15", "#CB181D", "#EF3B2C", "#FB6A4A", 
+                     "#FC9272", "#FCBBA1", "#C6DBEF", "#6BAED6", "#2171B5", 
+                     "#08306B")
 for(i in 1:length(feature_gene_list)){
-  print(FeaturePlot(proc_scobj, features=feature_gene_list[i], pt.size=2.5))
+  print(FeaturePlot(proc_scobj, features=feature_gene_list[i], pt.size=2.5,
+                    cols=rev(custom_rdbu_pal)))
 }
 ```
 
